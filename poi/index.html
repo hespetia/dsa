@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>POI 2026 · Seguimiento presupuestal</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">POI</span>
+    <div>
+      <h1>Seguimiento presupuestal · POI 2026</h1>
+      <p id="sourceInfo" class="muted">Sin archivo cargado</p>
+    </div>
+  </div>
+  <div class="actions">
+    <label class="btn btn-primary" for="fileInput">Cargar Excel</label>
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" hidden>
+    <button type="button" class="btn" id="btnExportExcel">Exportar Excel</button>
+    <button type="button" class="btn" id="btnBackup">Respaldo JSON</button>
+    <label class="btn" for="restoreInput">Restaurar respaldo</label>
+    <input type="file" id="restoreInput" accept=".json" hidden>
+    <button type="button" class="btn btn-danger" id="btnReset">Reiniciar datos</button>
+  </div>
+</header>
+
+<main>
+  <section class="card intro" id="intro">
+    <h2>Comienza cargando el archivo POI</h2>
+    <p>Selecciona el libro <strong>POI Modificado 2026. versión 3.xlsx</strong>. El archivo original no se modifica: la app solo lo lee. Los avances, observaciones, dependencias y documentos de respaldo se guardan en este navegador.</p>
+    <label class="btn btn-primary" for="fileInput">Seleccionar archivo Excel</label>
+    <p class="muted intro-hint">Si el navegador no permite guardar documentos al abrir el archivo directamente, ejecuta <code>python -m http.server 8000</code> en esta carpeta y entra a <code>http://localhost:8000</code>.</p>
+  </section>
+
+  <section id="workspace" hidden>
+    <div class="kpis" id="kpis"></div>
+
+    <section class="card filters">
+      <div class="filters-grid">
+        <label class="field">
+          <span>Buscar</span>
+          <input type="search" id="fText" placeholder="Código, detalle, tipo…">
+        </label>
+        <label class="field">
+          <span>Acción estratégica</span>
+          <select id="fHoja"></select>
+        </label>
+        <label class="field">
+          <span>Tipo de actividad</span>
+          <select id="fTipo"></select>
+        </label>
+        <label class="field">
+          <span>Trimestre con meta</span>
+          <select id="fTrimestre">
+            <option value="">Todos los trimestres</option>
+            <option value="1">1er trimestre</option>
+            <option value="2">2do trimestre</option>
+            <option value="3">3er trimestre</option>
+            <option value="4">4to trimestre</option>
+            <option value="ninguno">Sin meta por trimestre</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Situación</span>
+          <select id="fEstado">
+            <option value="">Todas</option>
+            <option value="rojo">No ejecutado (0%)</option>
+            <option value="amarillo">En proceso (1-99%)</option>
+            <option value="verde">Ejecutado (100%)</option>
+            <option value="noejecuta">Marcado no se ejecuta</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Financiamiento</span>
+          <select id="fFuente">
+            <option value="">Todos</option>
+            <option value="__vacio">Sin financiamiento</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Presupuesto</span>
+          <select id="fPresupuesto">
+            <option value="">Todos</option>
+            <option value="con">Con presupuesto</option>
+            <option value="sin">Sin presupuesto (0)</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Evidencia</span>
+          <select id="fAdicional">
+            <option value="">Toda</option>
+            <option value="adj">Con documentos</option>
+            <option value="obs">Con observaciones</option>
+            <option value="dep">Con dependencias</option>
+            <option value="alerta">Con alertas</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Ordenar por</span>
+          <select id="fOrden">
+            <option value="nro">N° de hoja</option>
+            <option value="presupuesto">Presupuesto (mayor)</option>
+            <option value="avance">Avance (menor)</option>
+            <option value="avance_desc">Avance (mayor)</option>
+            <option value="detalle">Detalle (A-Z)</option>
+          </select>
+        </label>
+        <div class="field field-actions">
+          <span>&nbsp;</span>
+          <button type="button" class="btn" id="btnClearFilters">Limpiar filtros</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card table-card">
+      <div class="table-head">
+        <h2 id="tableTitle">Actividades</h2>
+        <div class="legend">
+          <span><i class="dot rojo"></i>No ejecutado</span>
+          <span><i class="dot amarillo"></i>En proceso</span>
+          <span><i class="dot verde"></i>Ejecutado</span>
+          <span><i class="dot gris"></i>Marcado no se ejecuta</span>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table class="grid">
+          <thead>
+            <tr>
+              <th class="col-dot">Sem.</th>
+              <th class="col-nro">N°</th>
+              <th class="col-cod">Código</th>
+              <th>Detalle de actividad</th>
+              <th class="col-tipo">Tipo</th>
+              <th class="col-meta" title="Meta anual">Meta</th>
+              <th class="col-q" title="Meta del 1er trimestre">1T</th>
+              <th class="col-q" title="Meta del 2do trimestre">2T</th>
+              <th class="col-q" title="Meta del 3er trimestre">3T</th>
+              <th class="col-q" title="Meta del 4to trimestre">4T</th>
+              <th class="col-monto">Presupuesto</th>
+              <th class="col-avance">Avance</th>
+              <th class="col-estado">Situación</th>
+              <th class="col-docs">Respaldo</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="table-foot">
+        <span id="countInfo" class="muted"></span>
+        <span id="sumInfo" class="muted"></span>
+      </div>
+    </section>
+
+    <section class="card warnings" id="warningsCard" hidden>
+      <h2>Alertas de la carga</h2>
+      <ul id="warningsList"></ul>
+    </section>
+  </section>
+</main>
+
+<aside class="drawer" id="drawer" hidden aria-label="Detalle de actividad">
+  <div class="drawer-head">
+    <div>
+      <h2 id="dTitle">Actividad</h2>
+      <p id="dSubtitle" class="muted"></p>
+    </div>
+    <button type="button" class="btn btn-icon" id="dClose" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="drawer-body" id="dBody"></div>
+</aside>
+<div class="scrim" id="scrim" hidden></div>
+<div class="toasts" id="toasts"></div>
+
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+:root {
+  --bg: #f5f6fa;
+  --card-bg: #fff;
+  --text: #2d3436;
+  --muted: #636e72;
+  --accent: #0984e3;
+  --urgent-bg: #ffe9e9;
+  --urgent-border: #d63031;
+  --urgent-badge: #d63031;
+  --unread-bg: #eef7ff;
+  --border: #dfe6e9;
+  --radius: 8px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ---------- Header ---------- */
+header {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.header-left h1 { font-size: 1.3rem; color: var(--accent); }
+.subtitle { font-size: 0.8rem; color: var(--muted); }
+.header-right { display: flex; gap: 0.7rem; align-items: center; }
+.header-right button,
+.header-right a {
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.header-right button:hover,
+.header-right a:hover { background: var(--accent); color: #fff; }
+
+/* ---------- Main ---------- */
+main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+
+/* ---------- Spinner ---------- */
+.spinner-container { text-align: center; padding: 3rem; color: var(--muted); }
+.spinner {
+  width: 36px; height: 36px; margin: 0 auto 1rem;
+  border: 3px solid var(--border); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Error ---------- */
+.error-banner {
+  background: var(--urgent-bg); color: var(--urgent-border);
+  padding: 1rem 1.5rem; border-radius: var(--radius);
+  border-left: 4px solid var(--urgent-border); margin-bottom: 1.5rem;
+}
+
+/* ---------- Section ---------- */
+.section { margin-bottom: 2rem; }
+.section-title {
+  font-size: 1rem; font-weight: 700; margin-bottom: 0.8rem;
+  padding-bottom: 0.3rem; border-bottom: 2px solid var(--border);
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.section-title .badge {
+  background: var(--accent); color: #fff; font-size: 0.7rem;
+  padding: 0.15rem 0.5rem; border-radius: 999px;
+}
+.section.urgent { background: var(--urgent-bg); padding: 1rem; border-radius: var(--radius); border: 2px solid var(--urgent-border); margin-bottom: 2rem; }
+.section.urgent .section-title { border-bottom-color: var(--urgent-border); color: var(--urgent-border); }
+.section.urgent .badge { background: var(--urgent-badge); }
+
+/* ---------- Card ---------- */
+.email-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+  transition: box-shadow 0.15s, transform 0.1s;
+  cursor: default;
+}
+.email-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.07); transform: translateY(-1px); }
+.email-card.unread { background: var(--unread-bg); border-left: 3px solid var(--accent); }
+
+.email-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+}
+.email-body { flex: 1; min-width: 0; }
+.email-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem; }
+.email-from { font-weight: 600; font-size: 0.9rem; }
+.email-date { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+.email-subject { font-weight: 600; font-size: 0.85rem; margin-bottom: 0.2rem; }
+.email-snippet { font-size: 0.8rem; color: var(--muted); line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.email-labels { display: flex; gap: 0.3rem; margin-top: 0.4rem; flex-wrap: wrap; }
+.email-labels .label-tag {
+  font-size: 0.65rem; padding: 0.1rem 0.45rem; border-radius: 999px;
+  background: #dfe6e9; color: var(--text); white-space: nowrap;
+}
+.email-labels .label-tag.urgent-label { background: var(--urgent-bg); color: var(--urgent-border); border: 1px solid var(--urgent-border); }
+.unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 0.35rem; }
+
+/* ---------- Empty ---------- */
+.empty-state { text-align: center; padding: 3rem; color: var(--muted); }
+.empty-state h2 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+  header { flex-direction: column; gap: 0.8rem; align-items: flex-start; }
+  main { padding: 0 0.5rem; }
+}

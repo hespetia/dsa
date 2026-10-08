@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Correo Uandina</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <h1>Correo Uandina</h1>
+      <span class="subtitle">hespetia@uandina.edu.pe &mdash; correos de hoy</span>
+    </div>
+    <div class="header-right">
+      <button id="refreshBtn" style="display:none" onclick="loadMail()">Actualizar</button>
+      <a id="authBtn" href="/login">Conectar Gmail</a>
+    </div>
+  </header>
+
+  <main>
+    <div id="loading" style="display:none" class="spinner-container"><div class="spinner"></div><p>Cargando correos...</p></div>
+    <div id="error" style="display:none" class="error-banner"></div>
+    <div id="content"></div>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
