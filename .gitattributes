@@ -1,0 +1,4 @@
+# El entregable es UTF-8 con finales LF; autocrlf=true lo convertiría a CRLF
+# en el siguiente checkout y AGENTS.md lo prohíbe.
+plantrabajo/plantrabajo.html text eol=lf
+*.xlsx -text
